@@ -7,6 +7,7 @@ MediMetrics is a static, browser-based hospital analytics dashboard for a Class 
 ```text
 .
 ├── index.html
+├── requirements.txt
 ├── script.js
 ├── style.css
 └── python/
@@ -24,6 +25,14 @@ python3 -m http.server 8000
 ```
 
 Open `http://localhost:8000`. An internet connection is required to load Pyodide, Pandas, Matplotlib, fonts, and icons from their CDNs. The first Python startup may take a little while as the packages download.
+
+For Pylance diagnostics or running `python/analytics.py` with a local Python interpreter, install the optional local dependencies:
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
+These packages are not needed to serve or deploy the browser dashboard; it loads Pandas and Matplotlib through Pyodide.
 
 ## Deploy to Vercel
 
