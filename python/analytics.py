@@ -3,7 +3,6 @@ import base64
 import io
 import json
 import random
-import warnings
 from datetime import date, timedelta
 
 import matplotlib
@@ -152,7 +151,7 @@ monthly_admissions = (
 
 
 # 8. Matplotlib Visualizations
-# Desktop notebooks display charts with plt.show(); this browser version saves PNGs.
+# Desktop notebooks can display charts; this browser version saves PNGs.
 plt.rcParams.update({
     "figure.facecolor": "#101b2b",
     "axes.facecolor": "#101b2b",
@@ -169,11 +168,6 @@ plt.rcParams.update({
 def export_chart(figure):
     """Return a Matplotlib figure as a browser-ready PNG data URL."""
     image_buffer = io.BytesIO()
-    with warnings.catch_warnings():
-        warnings.filterwarnings(
-            "ignore", message="FigureCanvasAgg is non-interactive.*", category=UserWarning
-        )
-        plt.show()
     figure.savefig(
         image_buffer, format="png", dpi=130, bbox_inches="tight",
         facecolor=figure.get_facecolor(),
