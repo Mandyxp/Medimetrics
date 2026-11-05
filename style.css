@@ -275,6 +275,7 @@ h1, h2 { font-family: var(--font-display); letter-spacing: 0; }
 .student-fields input::placeholder { color: #738399; }
 
 .loading-screen { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; background: radial-gradient(ellipse at 50% 35%, rgba(38, 101, 111, 0.18), transparent 43%), var(--navy-950); }
+.loading-screen[hidden] { display: none; }
 .loading-panel { width: min(100%, 390px); text-align: center; animation: load-enter 500ms ease both; }
 @keyframes load-enter { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
 .loading-panel .brand-mark { margin: 0 auto 22px; }
