@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101b2b">
+  <meta name="description" content="MediMetrics hospital analytics dashboard, powered by Python, Pandas, Matplotlib, and Pyodide.">
+  <title>MediMetrics | Hospital Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-python.min.js"></script>
+  <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <div class="loading-screen" id="loading-screen" role="status" aria-live="polite">
+    <div class="loading-panel">
+      <div class="brand-mark brand-mark-large"><i data-lucide="activity"></i></div>
+      <p class="eyebrow">MEDIMETRICS / PYTHON ANALYTICS</p>
+      <h1>Preparing your workspace</h1>
+      <p class="loading-copy" id="loading-status">Connecting to the Python runtime...</p>
+      <div class="loading-track"><span></span></div>
+      <div class="loading-error" id="loading-error" hidden>
+        <p id="loading-error-message">The analytics runtime could not be loaded.</p>
+        <button class="button button-primary" id="retry-button" type="button">Retry initialization</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-shell" id="app-shell" aria-hidden="true">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#overview" aria-label="MediMetrics overview">
+        <span class="brand-mark"><i data-lucide="activity"></i></span>
+        <span class="brand-copy"><strong>MediMetrics</strong><small>Hospital intelligence</small></span>
+      </a>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <button class="nav-item is-active" type="button" data-view="overview"><i data-lucide="layout-dashboard"></i><span>Overview</span></button>
+        <button class="nav-item" type="button" data-view="patients"><i data-lucide="users-round"></i><span>Patient Records</span></button>
+        <button class="nav-item" type="button" data-view="departments"><i data-lucide="building-2"></i><span>Department Analytics</span></button>
+        <button class="nav-item" type="button" data-view="finance"><i data-lucide="wallet-cards"></i><span>Financial Analytics</span></button>
+        <button class="nav-item" type="button" data-view="visualizations"><i data-lucide="chart-no-axes-combined"></i><span>Visualizations</span></button>
+        <button class="nav-item" type="button" data-view="code-lab"><i data-lucide="terminal-square"></i><span>Python Code Lab</span></button>
+        <button class="nav-item" type="button" data-view="about"><i data-lucide="book-open-text"></i><span>About Project</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="runtime-card">
+          <span class="runtime-dot"></span>
+          <span><strong>Python runtime</strong><small id="runtime-version">Pyodide loading</small></span>
+        </div>
+        <div class="sidebar-caption">INFORMATICS PRACTICES <span>·</span> CLASS XII</div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="icon-button menu-button" id="menu-button" type="button" aria-label="Open navigation"><i data-lucide="menu"></i></button>
+        <div class="breadcrumb"><span>Workspace</span><i data-lucide="chevron-right"></i><strong id="page-title">Overview</strong></div>
+        <div class="topbar-actions">
+          <span class="topbar-date"><i data-lucide="calendar-days"></i><span id="data-date">Synthetic dataset</span></span>
+          <button class="button button-quiet refresh-button" id="regenerate-button" type="button"><i data-lucide="refresh-cw"></i><span>Regenerate data</span></button>
+          <span class="avatar" aria-label="MediMetrics workspace">MM</span>
+        </div>
+      </header>
+
+      <div class="view-container">
+        <section class="view is-visible" id="view-overview" data-view-panel="overview">
+          <div class="page-heading">
+            <div><p class="eyebrow">HOSPITAL OPERATIONS / 01</p><h1>Overview</h1><p class="page-subtitle">A clear view of patient care and hospital performance.</p></div>
+            <span class="data-badge"><span class="status-pulse"></span> Live from Python</span>
+          </div>
+          <div class="kpi-grid">
+            <article class="kpi-card accent-teal"><div class="kpi-label">Total patients <i data-lucide="users-round"></i></div><div class="kpi-value" id="kpi-patients">—</div><div class="kpi-foot">Across all departments</div></article>
+            <article class="kpi-card accent-blue"><div class="kpi-label">Average patient age <i data-lucide="user-round"></i></div><div class="kpi-value" id="kpi-age">—</div><div class="kpi-foot">Years across all admissions</div></article>
+            <article class="kpi-card accent-gold"><div class="kpi-label">Total revenue <i data-lucide="indian-rupee"></i></div><div class="kpi-value" id="kpi-revenue">—</div><div class="kpi-foot">Total patient billing</div></article>
+            <article class="kpi-card accent-coral"><div class="kpi-label">Average stay <i data-lucide="bed-single"></i></div><div class="kpi-value" id="kpi-stay">—</div><div class="kpi-foot">Days per admission</div></article>
+            <article class="kpi-card accent-gold"><div class="kpi-label">Pending payments <i data-lucide="clock-3"></i></div><div class="kpi-value" id="kpi-pending">—</div><div class="kpi-foot">Outstanding balance</div></article>
+            <article class="kpi-card accent-blue"><div class="kpi-label">Most occupied <i data-lucide="building-2"></i></div><div class="kpi-value kpi-value-text" id="kpi-department">—</div><div class="kpi-foot">By number of admissions</div></article>
+          </div>
+          <div class="content-grid overview-grid">
+            <article class="panel chart-panel chart-wide"><div class="panel-heading"><div><p class="eyebrow">ADMISSIONS</p><h2>Patient distribution</h2></div><span class="panel-note">Patients by department</span></div><img class="chart-image chart-wide-image" id="chart-department-overview" alt="Matplotlib bar chart showing patients by department"></article>
+            <article class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow">PATIENT MIX</p><h2>Gender distribution</h2></div></div><img class="chart-image chart-donut-image" id="chart-gender-overview" alt="Matplotlib pie chart showing gender distribution"></article>
+            <article class="panel"><div class="panel-heading"><div><p class="eyebrow">REVENUE CYCLE</p><h2>Financial overview</h2></div><button class="text-link" type="button" data-navigate="finance">View details <i data-lucide="arrow-up-right"></i></button></div><div class="finance-total"><span>Total billed</span><strong id="finance-total-overview">—</strong></div><div class="payment-track"><span id="payment-track-paid"></span><span id="payment-track-pending"></span></div><div class="payment-legend"><span><i class="legend-dot dot-teal"></i>Paid <strong id="paid-amount-overview">—</strong></span><span><i class="legend-dot dot-gold"></i>Pending <strong id="pending-amount-overview">—</strong></span></div></article>
+            <article class="panel admissions-panel"><div class="panel-heading"><div><p class="eyebrow">LATEST ACTIVITY</p><h2>Recent admissions</h2></div><button class="text-link" type="button" data-navigate="patients">All records <i data-lucide="arrow-up-right"></i></button></div><div class="table-scroll"><table class="data-table compact-table"><thead><tr><th>Patient</th><th>Department</th><th>Admission date</th><th>Bill</th><th>Status</th></tr></thead><tbody id="recent-patients-body"></tbody></table></div></article>
+          </div>
+          <footer class="view-footer">MediMetrics <span>·</span> Academic demonstration with fictional patient records</footer>
+        </section>
+
+        <section class="view" id="view-patients" data-view-panel="patients" hidden>
+          <div class="page-heading"><div><p class="eyebrow">RECORDS / 02</p><h1>Patient Records</h1><p class="page-subtitle">Browse and filter the synthetic patient registry.</p></div><span class="record-count" id="record-count">100 records</span></div>
+          <article class="panel records-panel">
+            <div class="table-toolbar"><label class="search-field"><i data-lucide="search"></i><input id="patient-search" type="search" placeholder="Search patient ID or name" autocomplete="off"></label><label class="filter-field"><span>Department</span><select id="department-filter"><option value="">All departments</option></select></label><label class="filter-field"><span>Gender</span><select id="gender-filter"><option value="">All genders</option><option>Female</option><option>Male</option></select></label><button class="icon-button clear-filters" id="clear-filters" type="button" aria-label="Clear filters" title="Clear filters"><i data-lucide="list-filter-x"></i></button></div>
+            <div class="table-scroll records-scroll">
+              <table class="data-table records-table">
+                <thead><tr>
+                  <th><button data-sort="Patient_ID">Patient <i data-lucide="arrow-up-down"></i></button></th>
+                  <th><button data-sort="Age">Age / gender <i data-lucide="arrow-up-down"></i></button></th>
+                  <th><button data-sort="Department">Department <i data-lucide="arrow-up-down"></i></button></th>
+                  <th><button data-sort="Diagnosis">Diagnosis <i data-lucide="arrow-up-down"></i></button></th>
+                  <th><button data-sort="Doctor_Name">Doctor <i data-lucide="arrow-up-down"></i></button></th>
+                  <th><button data-sort="Room_Type">Room <i data-lucide="arrow-up-down"></i></button></th>
+                  <th><button data-sort="Admission_Date">Admission <i data-lucide="arrow-up-down"></i></button></th>
+                  <th><button data-sort="Discharge_Date">Discharge <i data-lucide="arrow-up-down"></i></button></th>
+                  <th><button data-sort="Length_of_Stay">Stay <i data-lucide="arrow-up-down"></i></button></th>
+                  <th><button data-sort="Bill_Amount">Bill amount <i data-lucide="arrow-up-down"></i></button></th>
+                  <th><button data-sort="Payment_Status">Payment <i data-lucide="arrow-up-down"></i></button></th>
+                </tr></thead>
+                <tbody id="patient-records-body"></tbody>
+              </table>
+            </div>
+            <div class="table-pagination"><span id="pagination-summary">Showing 0 records</span><div><button class="icon-button" id="previous-page" type="button" aria-label="Previous page"><i data-lucide="chevron-left"></i></button><span class="page-indicator" id="page-indicator">1 / 1</span><button class="icon-button" id="next-page" type="button" aria-label="Next page"><i data-lucide="chevron-right"></i></button></div></div>
+          </article>
+          <footer class="view-footer">All records are generated in-browser with Python and Pandas.</footer>
+        </section>
+
+        <section class="view" id="view-departments" data-view-panel="departments" hidden>
+          <div class="page-heading"><div><p class="eyebrow">SERVICE LINES / 03</p><h1>Department Analytics</h1><p class="page-subtitle">Compare admissions, patient profiles, length of stay, and billing.</p></div></div>
+          <div class="content-grid department-grid"><article class="panel chart-panel chart-wide"><div class="panel-heading"><div><p class="eyebrow">VOLUME</p><h2>Admissions by department</h2></div><span class="panel-note">Sorted by patient count</span></div><img class="chart-image chart-wide-image" id="chart-department-analytics" alt="Matplotlib bar chart showing department admission counts"></article><article class="panel department-leader"><p class="eyebrow">HIGHEST ADMISSIONS</p><div class="leader-number" id="department-leader-count">—</div><h2 id="department-leader-name">—</h2><p>patients in this department</p></article><article class="panel department-table-panel"><div class="panel-heading"><div><p class="eyebrow">DEPARTMENT PERFORMANCE</p><h2>Service line comparison</h2></div></div><div class="table-scroll"><table class="data-table"><thead><tr><th>Department</th><th>Patients</th><th>Avg. age</th><th>Avg. stay</th><th>Total billing</th></tr></thead><tbody id="department-table-body"></tbody></table></div></article></div>
+          <footer class="view-footer">Patient counts and averages are calculated with Pandas groupby operations.</footer>
+        </section>
+
+        <section class="view" id="view-finance" data-view-panel="finance" hidden>
+          <div class="page-heading"><div><p class="eyebrow">REVENUE CYCLE / 04</p><h1>Financial Analytics</h1><p class="page-subtitle">A department-level view of billing and payment status.</p></div></div>
+          <div class="kpi-grid finance-kpis"><article class="kpi-card accent-teal"><div class="kpi-label">Total revenue <i data-lucide="indian-rupee"></i></div><div class="kpi-value" id="finance-total">—</div><div class="kpi-foot">Billed across all records</div></article><article class="kpi-card accent-blue"><div class="kpi-label">Average bill <i data-lucide="receipt-text"></i></div><div class="kpi-value" id="finance-average-bill">—</div><div class="kpi-foot">Per patient record</div></article><article class="kpi-card accent-teal"><div class="kpi-label">Payments received <i data-lucide="badge-indian-rupee"></i></div><div class="kpi-value" id="finance-paid">—</div><div class="kpi-foot" id="finance-paid-count">— payments marked paid</div></article><article class="kpi-card accent-gold"><div class="kpi-label">Outstanding <i data-lucide="hourglass"></i></div><div class="kpi-value" id="finance-pending">—</div><div class="kpi-foot" id="finance-pending-count">— payments pending</div></article></div>
+          <div class="content-grid finance-grid"><article class="panel chart-panel chart-wide"><div class="panel-heading"><div><p class="eyebrow">DEPARTMENT REVENUE</p><h2>Billing by service line</h2></div></div><img class="chart-image chart-wide-image" id="chart-revenue-finance" alt="Matplotlib bar chart showing department revenue"></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">PAYMENT STATUS</p><h2>Collection summary</h2></div></div><div class="collection-summary" id="collection-summary"></div></article></div>
+          <footer class="view-footer">Revenue and payment totals are derived from the synthetic Pandas DataFrame.</footer>
+        </section>
+
+        <section class="view" id="view-visualizations" data-view-panel="visualizations" hidden>
+          <div class="page-heading"><div><p class="eyebrow">MATPLOTLIB / 05</p><h1>Visualizations</h1><p class="page-subtitle">Four charts rendered in Python and delivered as PNG images.</p></div><span class="data-badge"><i data-lucide="image"></i> Matplotlib · PNG</span></div>
+          <div class="visualization-grid"><article class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow">01 / DEPARTMENT</p><h2>Patient admissions</h2></div></div><img class="chart-image chart-wide-image" id="chart-department-gallery" alt="Matplotlib bar chart of patient admissions by department"></article><article class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow">02 / GENDER</p><h2>Patient mix</h2></div></div><img class="chart-image chart-donut-image" id="chart-gender-gallery" alt="Matplotlib pie chart of gender distribution"></article><article class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow">03 / ADMISSIONS</p><h2>Monthly trend</h2></div></div><img class="chart-image chart-wide-image" id="chart-monthly-gallery" alt="Matplotlib line chart of monthly patient admissions"></article><article class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow">04 / REVENUE</p><h2>Department billing</h2></div></div><img class="chart-image chart-wide-image" id="chart-revenue-gallery" alt="Matplotlib bar chart of revenue by department"></article></div>
+          <footer class="view-footer">Charts are created with Matplotlib, encoded using Base64, and displayed directly from Python.</footer>
+        </section>
+
+        <section class="view" id="view-code-lab" data-view-panel="code-lab" hidden>
+          <div class="page-heading"><div><p class="eyebrow">IN-BROWSER PYTHON / 06</p><h1>Python Code Lab</h1><p class="page-subtitle">Explore and run the Python source powering this dashboard.</p></div><span class="data-badge"><span class="status-pulse"></span> Pyodide · Pandas · Matplotlib</span></div>
+          <div class="lab-layout"><aside class="lab-sidebar"><div class="lab-sidebar-heading"><i data-lucide="list-tree"></i><span>CODE SECTIONS</span></div><nav id="code-section-nav" aria-label="Python code sections"><button type="button" data-code-section="1. Importing Libraries">01 <span>Importing Libraries</span></button><button type="button" data-code-section="2. Generating Synthetic Data">02 <span>Generating Synthetic Data</span></button><button type="button" data-code-section="3. Creating the DataFrame">03 <span>Creating the DataFrame</span></button><button type="button" data-code-section="4. Data Cleaning">04 <span>Data Cleaning</span></button><button type="button" data-code-section="5. Statistical Analysis">05 <span>Statistical Analysis</span></button><button type="button" data-code-section="6. Department Analysis">06 <span>Department Analysis</span></button><button type="button" data-code-section="7. Financial Analysis">07 <span>Financial Analysis</span></button><button type="button" data-code-section="8. Matplotlib Visualizations">08 <span>Matplotlib Visualizations</span></button></nav><div class="section-explanation" id="section-explanation"><span>ABOUT THIS SECTION</span><p>Select a section to inspect its corresponding lines in the executable source.</p></div></aside>
+            <div class="lab-main"><article class="panel code-panel"><div class="code-toolbar"><div class="code-file"><span class="python-file-icon">Py</span><span>python/analytics.py</span><span class="code-file-badge">SOURCE</span></div><div class="code-actions"><button class="button button-quiet" id="reset-code-button" type="button"><i data-lucide="rotate-ccw"></i><span>Reset code</span></button><button class="button button-primary" id="run-code-button" type="button"><i data-lucide="play"></i><span>Run Python code</span></button></div></div><div class="code-editor" id="code-editor"><pre aria-hidden="true"><code id="code-highlight" class="language-python"></code></pre><textarea id="python-editor" aria-label="Editable Python analytics source" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea></div><div class="editor-status"><span><i data-lucide="lock-keyhole-open"></i> Editable source · runs in this browser</span><span id="editor-cursor">Python 3 · UTF-8</span></div></article>
+              <article class="panel output-panel"><div class="output-heading"><div><span class="terminal-indicator"></span><span>EXECUTION OUTPUT</span></div><span id="execution-status">Ready</span></div><pre id="python-output" aria-live="polite">Run the source to see actual Python output.</pre></article>
+            </div>
+          </div>
+          <footer class="view-footer">The displayed source is fetched from python/analytics.py and is the code executed by Pyodide.</footer>
+        </section>
+
+        <section class="view" id="view-about" data-view-panel="about" hidden>
+          <div class="page-heading"><div><p class="eyebrow">ACADEMIC PROJECT / 07</p><h1>About MediMetrics</h1><p class="page-subtitle">A browser-based hospital analytics project for Informatics Practices.</p></div></div>
+          <div class="about-layout"><article class="panel project-identity"><div class="brand-mark brand-mark-large"><i data-lucide="activity"></i></div><p class="eyebrow">PROJECT OVERVIEW</p><h2>Hospital Analytics System</h2><p>MediMetrics explores how Python data tools can turn a hospital's patient records into useful operational and financial insights.</p><div class="identity-divider"></div><dl class="project-facts"><div><dt>Project name</dt><dd>MediMetrics</dd></div><div><dt>Subject</dt><dd>Informatics Practices (065)</dd></div><div><dt>Class</dt><dd>XII</dd></div><div><dt>Academic session</dt><dd>2026–2027</dd></div></dl></article>
+            <div class="about-details"><article class="panel"><div class="panel-heading"><div><p class="eyebrow">PROJECT DOCUMENTATION</p><h2>Objectives</h2></div><i class="about-icon" data-lucide="target"></i></div><ul class="objective-list"><li>Generate a reproducible synthetic hospital dataset with Python.</li><li>Use Pandas to clean records, describe data, and compare departments.</li><li>Visualize patient admissions and revenue using Matplotlib.</li><li>Make the analysis accessible in an interactive browser dashboard.</li></ul></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">METHODOLOGY</p><h2>From records to insights</h2></div><i class="about-icon" data-lucide="workflow"></i></div><div class="method-steps"><div><span>01</span><p><strong>Generate</strong> fictional patient records with a fixed Python random seed.</p></div><div><span>02</span><p><strong>Prepare</strong> the Pandas DataFrame and handle basic data cleaning.</p></div><div><span>03</span><p><strong>Analyze</strong> departments, payments, and descriptive statistics.</p></div><div><span>04</span><p><strong>Visualize</strong> findings as Matplotlib charts rendered in the browser.</p></div></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">TECHNOLOGY</p><h2>Project stack</h2></div><i class="about-icon" data-lucide="layers-2"></i></div><div class="technology-list"><span>Python</span><span>Pandas</span><span>Matplotlib</span><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Pyodide</span><span>Vercel</span></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">CONCLUSION</p><h2>What this project demonstrates</h2></div><i class="about-icon" data-lucide="sparkles"></i></div><p class="conclusion-copy">MediMetrics demonstrates an end-to-end analytics workflow using familiar Class XII IP concepts. All patient records are fictional, and Python, Pandas, and Matplotlib execute locally in the browser without a backend.</p></article><article class="panel student-panel"><div class="panel-heading"><div><p class="eyebrow">STUDENT DETAILS</p><h2>Project submitted by</h2></div><span class="editable-hint"><i data-lucide="pencil"></i> Click to edit</span></div><div class="student-fields"><label>Student name<input data-student-field="student-name" placeholder="Enter student name"></label><label>Roll number<input data-student-field="roll-number" placeholder="Enter roll number"></label><label>School name<input data-student-field="school-name" placeholder="Enter school name"></label><label>Teacher name<input data-student-field="teacher-name" placeholder="Enter teacher name"></label></div></article></div></div>
+          <footer class="view-footer">For academic demonstration only. All patient information is synthetic.</footer>
+        </section>
+      </div>
+    </main>
+    <button class="sidebar-scrim" id="sidebar-scrim" type="button" aria-label="Close navigation"></button>
+  </div>
+</body>
+</html>
